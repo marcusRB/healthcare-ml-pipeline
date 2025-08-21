@@ -49,7 +49,7 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: ${{ vars.AWS_REGION }}
-        role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE }}
+        role-to-assume: ${{ vars.AWS_DEPLOY_ROLE }}
         role-session-name: GitHubActions-${{ github.run_id }}
 
     - name: Login to Amazon ECR
@@ -84,7 +84,7 @@ jobs:
       run: |
         # Get instance status
         INSTANCE_STATE=$(aws ec2 describe-instances \
-          --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
+          --instance-ids ${{ vars.EC2_INSTANCE_ID }} \
           --query 'Reservations[0].Instances[0].State.Name' \
           --output text)
         
@@ -93,17 +93,17 @@ jobs:
         # Start instance if stopped
         if [ "$INSTANCE_STATE" = "stopped" ]; then
           echo "Starting instance..."
-          aws ec2 start-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+          aws ec2 start-instances --instance-ids ${{ vars.EC2_INSTANCE_ID }}
           
           # Wait for instance to be running
           echo "Waiting for instance to start..."
           aws ec2 wait instance-running \
-            --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+            --instance-ids ${{ vars.EC2_INSTANCE_ID }}
         fi
 
         # Get public IP (in case it changed after start)
         export PUBLIC_IP=$(aws ec2 describe-instances \
-          --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
+          --instance-ids ${{ vars.EC2_INSTANCE_ID }} \
           --query 'Reservations[0].Instances[0].PublicIpAddress' \
           --output text)
         
@@ -114,7 +114,7 @@ jobs:
       uses: appleboy/ssh-action@v1
       with:
         host: ${{ env.PUBLIC_IP }}  # Use the updated IP
-        username: ec2-user
+        username: ${{ vars.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           # Pull and run the new container
