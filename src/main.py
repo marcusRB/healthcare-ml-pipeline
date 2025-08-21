@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
-from app.s3_client import S3Client
-from app.model import DiabetesPredictor
+from src.s3_client import S3Client
+from src.model import DiabetesPredictor
 import pandas as pd
 from datetime import datetime
 import os
@@ -14,7 +14,7 @@ predictor = DiabetesPredictor()
 async def startup_event():
     try:
         # For demo purposes, we'll generate sample data and train a model
-        from app.sample_data.generate_sample_data import generate_sample_data
+        from src.sample_data.generate_sample_data import generate_sample_data
         df = generate_sample_data(500)
         predictor.train(df)
         print("Model trained on startup with sample data")

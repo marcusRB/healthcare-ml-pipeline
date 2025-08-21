@@ -51,6 +51,9 @@ def generate_sample_data(num_records=1000):
         'diabetes_risk': diabetes_risk,
         'risk_probability': probability
     })
+
+    # Show a sample of the generated data
+    print(df.sample(10, random_state=42))
     
     # Save to CSV
     os.makedirs('sample_data', exist_ok=True)
