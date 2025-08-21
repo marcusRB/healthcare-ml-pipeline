@@ -118,11 +118,11 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           # Pull and run the new container
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 386554135793.dkr.ecr.us-east-1.amazonaws.com
-          docker pull 386554135793.dkr.ecr.us-east-1.amazonaws.com/healthcare-ml-app:latest
+          aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
+          docker pull ${{ steps.build.outputs.image }}
           docker stop healthcare-ml-app || true
           docker rm healthcare-ml-app || true
-          docker run -d -p 8000:8000 --name healthcare-ml-app 386554135793.dkr.ecr.us-east-1.amazonaws.com/healthcare-ml-app:latest
+          docker run -d -p 8000:8000 --name healthcare-ml-app ${{ steps.build.outputs.image }}
 
   deploy-production:
     if: github.ref == 'refs/heads/main'
