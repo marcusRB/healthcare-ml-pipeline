@@ -5,10 +5,10 @@ permissions:
   contents: read
 
 on:
-  push:
-    branches:
-      - develop
-      - feature/*
+  workflow_run:
+    workflows: ["01 - Lint Code with Ruff"]   # must match the exact name
+    types:
+      - completed
 
 jobs:
   test:
