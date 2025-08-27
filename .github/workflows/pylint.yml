@@ -2,7 +2,9 @@ name: 01 - Lint Code with Ruff
 
 on:
   pull_request:
-    branches: [develop]
+    # branches: [develop]
+    branches:
+      - feature/*
 
 jobs:
   lint:
