@@ -1,0 +1,29 @@
+name: 01 - Lint Code with Ruff
+
+on:
+  pull_request:
+    # branches: [develop]
+    branches:
+      - feature/*
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install .[linter]  # Installs Ruff from pyproject.toml's optional dependencies
+
+      - name: Run Ruff
+        run: ruff check .
