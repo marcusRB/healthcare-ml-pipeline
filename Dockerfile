@@ -12,14 +12,19 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY src/ ./app/src/
+COPY app/ ./app/
 
 # Copy entrypoint script
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
 # Create a non-root user
-RUN useradd -m -u 1000 appuser
+RUN useradd -m -u 1001 appuser
+
+# Allow permissions
+RUN chown -R appuser:appuser /app
+
+# Switch a non-root user
 USER appuser
 
 EXPOSE 8000
